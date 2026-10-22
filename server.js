@@ -1,4 +1,6 @@
+
 require("dotenv").config();
+const cors = require("cors");
 
 const express = require("express");
 const prisma = require("./src/config/prisma");
@@ -7,6 +9,14 @@ const jobRoutes = require("./src/routes/jobRoutes");
 const applicationRoutes = require("./src/routes/applicationRoutes");
 
 const app = express();
+app.use(cors({
+  origin: "http://localhost:5173"
+}));
+
+app.use((req, res, next) => {
+  console.log("REQUEST:", req.method, req.originalUrl);
+  next();
+});
 
 app.use(express.json());
 app.use("/api", jobRoutes);
@@ -14,6 +24,8 @@ app.use("/api", applicationRoutes);
 
 
 app.use("/api/auth", authRoutes);
+
+
 
 
 app.get("/api/test-db", async (req, res) => {

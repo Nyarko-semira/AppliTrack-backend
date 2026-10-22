@@ -7,18 +7,27 @@ const setupHr = async () => {
   try {
     const passwordHash = await bcrypt.hash("hr123456", 10);
 
-    const hr = await prisma.user.update({
+    const hr = await prisma.user.upsert({
       where: {
         email: "hr@applitrack.com"
       },
-      data: {
+
+      update: {
         name: "HR Manager",
+        passwordHash,
+        role: "HR"
+      },
+
+      create: {
+        name: "HR Manager",
+        email: "hr@applitrack.com",
         passwordHash,
         role: "HR"
       }
     });
 
-    console.log("HR account updated:");
+    console.log("HR account ready:");
+
     console.log({
       id: hr.id,
       name: hr.name,
@@ -27,7 +36,7 @@ const setupHr = async () => {
     });
 
   } catch (error) {
-    console.error("Failed to update HR:", error);
+    console.error("Failed to setup HR:", error);
   } finally {
     await prisma.$disconnect();
   }

@@ -115,6 +115,8 @@ const getJobs = async (req, res) => {
       }
     });
 
+    console.log("JOBS FROM DATABASE:", jobs);
+
     res.json({
       jobs
     });

@@ -101,7 +101,7 @@ const applyForJob = async (req, res) => {
       });
     }
 
-    // Create application
+    
     const application = await prisma.application.create({
       data: {
         applicantId: req.user.id,
@@ -189,6 +189,38 @@ const getHrApplications = async (req, res) => {
   }
 };
 
+
+const getApplicationById = async (req, res) => {
+  try {
+    const application = await prisma.application.findFirst({
+      where: {
+        id: Number(req.params.id),
+        applicantId: req.user.id     
+      },
+      include: {
+        job: true
+      }
+    });
+
+    if (!application) {
+      return res.status(404).json({
+        message: "Application not found."
+      });
+    }
+
+    res.json({
+      application
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      message: "Failed to fetch application"
+    });
+  }
+};
+
 const updateApplicationStatus = async (req, res) => {
   try {
     const { id } = req.params;
@@ -240,5 +272,6 @@ module.exports = {
   applyForJob,
   getMyApplications,
   getHrApplications,
-  updateApplicationStatus
+  updateApplicationStatus,
+  getApplicationById
 };
